@@ -4,7 +4,7 @@ class Validate {
    postUserValidation = joi.object().keys({
         name: joi.string().min(3).required(),
         parol: joi.string().min(3).required(),
-        pic: joi.string().min(5).required()
+        email: joi.string().min(5).required().regex(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     })
 
     loginValidation = joi.object().keys({

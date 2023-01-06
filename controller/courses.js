@@ -8,18 +8,18 @@ class CoursesController{
             // await my.save()
             // console.log(my);
             const courses = await course.find().populate('category_id').populate('user_id');
-            res.status(200).json({status:200, message:'success', data: courses})
+            res.status(200).json({status:200,success:true, message:'success', data: courses})
         }
         catch(e){
             console.log(e);
-            res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
+            res.status(500).json({status:500,   message:'Noto`g`ri so`rov'})
         }
     }
 
     async GetByCategoryId(req, res){
         try{
             const courses = await course.find({category_id: req.params.id}).populate('category_id').populate('user_id');
-            res.status(200).json({status:200, message:'success', data: courses})
+            res.status(200).json({status:200, success:true, message:'success', data: courses})
         }
         catch(e){
             console.log(e);
@@ -30,7 +30,7 @@ class CoursesController{
     async GetMy(req, res){
         try{
             const courses = await course.find({user_id: req.user._id}).populate('category_id');
-            res.status(200).json({status:200, message:'success', data: courses})
+            res.status(200).json({status:200,success:true, message:'success', data: courses})
         }
         catch(e){
             console.log(e);
@@ -40,12 +40,10 @@ class CoursesController{
 
     async Search(req, res){
         try{
-            console.log(req.body);
             const courses = await course.find({name:{ $regex: req.body.title, $options: "i"}}).populate('category_id');
-            res.status(200).json({status:200, message:'success', data: courses})
+            res.status(200).json({status:200,success:true, message:'success', data: courses})
         }
         catch(e){
-            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }
@@ -54,10 +52,9 @@ class CoursesController{
         try{
             const courses = await course.find({user_id:req.user._id, name:{ $regex: req.body.title, $options: "i"}}).populate('category_id');
             console.log(courses);
-            res.status(200).json({status:200, message:'success', data: courses})
+            res.status(200).json({status:200,success:true, message:'success', data: courses})
         }
         catch(e){
-            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }
@@ -80,7 +77,6 @@ class CoursesController{
             res.status(200).json({status:200, success: true,  message:'success', data: updateCourse})
         }
         catch(e){
-            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }
@@ -100,8 +96,7 @@ class CoursesController{
 
             res.status(200).json({status:200, success: true,  message:'success', data: AddedCourse})
         }
-        catch(e){
-            console.log(e);
+        catch{
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }
@@ -118,7 +113,6 @@ class CoursesController{
             res.status(200).json({status:200, success: true,  message:'success', data: deletedCourse})
         }
         catch(e){
-            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }

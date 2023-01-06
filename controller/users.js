@@ -58,7 +58,7 @@ class UsersController{
     async Get(req, res){
         try{
             const user = await users.find();
-            res.status(200).json({status:200, message:'yaxshi uka', data: user})
+            res.status(200).json({status:200, success:true,  message:'yaxshi uka', data: user})
         }
         catch{
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
