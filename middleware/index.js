@@ -22,7 +22,6 @@ class middleware{
              
                 req.user = foundUser
 
-                
                 next();
             })
         }

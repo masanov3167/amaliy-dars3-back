@@ -1,12 +1,10 @@
 const course = require("../models/courses");
-const validate = require('../config')
+const validate = require('../config');
+const users = require("../models/users");
 
 class CoursesController{
     async Get(_, res){
         try{
-            // const my = new course({name:'react framework', category_id:'63b6dccc0d419ef0b838e9f8', user_id:'63b71c154e933855cfa19538', about:'react framework haqida', pic:'https://picsum.photos/300'});
-            // await my.save()
-            // console.log(my);
             const courses = await course.find().populate('category_id').populate('user_id');
             res.status(200).json({status:200,success:true, message:'success', data: courses})
         }
@@ -68,7 +66,7 @@ class CoursesController{
                 return
             }
             const courses = await course.find({user_id:req.user._id, _id: req.params.id});
-            if(courses.length <1){
+            if(courses.length <1 && req.user.role !==2){
                 res.status(404).json({status:404, message:'kurs topilmadi yoki siz tahrirlamoqchi bo`lgan kurs sizga tegishli emas :('});
                 return
             }
@@ -90,13 +88,22 @@ class CoursesController{
                 return
             }
            
+            const oldUser = await users.findOne({_id: value.user_id});
+            if(!oldUser){
+                res.status(403).json({status:403, message:'Sizdagi token yaroqsiz iltimos qayta login qiling :('});
+                return
+            }
             const AddedCourse = new course(value);
             await AddedCourse.save().then(t => t.populate('category_id'));
+            oldUser.courses.push(AddedCourse._id);
             
+            await AddedCourse.save();
+            await oldUser.save();
 
             res.status(200).json({status:200, success: true,  message:'success', data: AddedCourse})
         }
-        catch{
+        catch(e){
+            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }
@@ -104,15 +111,21 @@ class CoursesController{
     async Delete(req, res){
         try{           
             const courses = await course.find({user_id:req.user._id, _id: req.params.id});
-            if(courses.length <1){
-                res.status(404).json({status:404, message:'kurs topilmadi yoki siz o`chirmoqchi bo`lgan kurs sizga tegishli emas :('});
+            if(courses.length <1  && req.user.role !==2){
+                res.status(404).json({status:404, message:'kurs topilmadi yoki sizga ruhsat yo`q :('});
                 return
             }
-            const deletedCourse = await course.findByIdAndDelete(req.params.id);
+            const deletedCourse = await course.findByIdAndDelete(req.params.id).populate('category_id');
+            await users.update({courses:{ $all : [req.params.id]}}, {
+                $pull: {
+                    courses: req.params.id
+                }
+            });
 
             res.status(200).json({status:200, success: true,  message:'success', data: deletedCourse})
         }
         catch(e){
+            console.log(e);
             res.status(500).json({status:500, message:'Noto`g`ri so`rov'})
         }
     }

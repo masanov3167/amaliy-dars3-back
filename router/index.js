@@ -9,8 +9,10 @@ const middleware = require('../middleware');
 
 router
        .post('/users', middleware.checkContentType, users.Add)
+       .put('/users/:id', middleware.checkContentType, middleware.checkToken, users.Edit)
+       .delete('/users/:id', middleware.checkContentType, middleware.checkToken, users.Delete)
        .post('/user_login',middleware.checkContentType, users.Login)
-       .get('/users', middleware.checkContentType, users.Get)
+       .get('/users', middleware.checkToken,  users.Get)
 
        .get('/category', middleware.checkContentType, middleware.checkToken, category.Get)
 
